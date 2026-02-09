@@ -1,36 +1,35 @@
-import random
+from coaster_connections import ConnectionsGame
 
-class Game:
-    def __init__(self):
-        self.words = ['rollercoaster', 'ferriswheel', 'bumbercar', 'waterpark']  # Example words
-        self.maximum_mistakes = 4
-        self.remaining_mistakes = self.maximum_mistakes
-        self.guess_history = [] 
+def main():
+    game = ConnectionsGame()
+    max_mistakes = 4
+    mistakes = 0
 
-    def make_guess(self, guess):
-        if guess in self.words and guess not in self.guess_history:
-            self.guess_history.append(guess)
-            print(f'Correct guess: {guess}!')
+    print("Welcome to the Connections Game!")
+    print("Guess the connections by entering 4 words at a time.")
+    print(f"You can make up to {max_mistakes} mistakes.")
+
+    while mistakes < max_mistakes:
+        guess = input("Enter your guess (4 words separated by spaces): ")
+        words = guess.split()
+
+        if len(words) != 4:
+            print("Please enter exactly 4 words.")
+            continue
+
+        if game.check_guess(words):
+            print("Correct guess!")
+            game.record_correct_guess(words)
         else:
-            self.remaining_mistakes -= 1
-            print(f'Incorrect guess: {guess}. Remaining mistakes: {self.remaining_mistakes}')
+            mistakes += 1
+            print(f"Wrong guess! You have {max_mistakes - mistakes} mistakes left.")
 
-    def check_game_over(self):
-        if self.remaining_mistakes <= 0:
-            print('Game over! Maximum mistakes reached.')
-            return True
-        return False
+        if game.is_completed():
+            print("Congratulations! You've completed the game.")
+            break
 
-    def play(self):
-        print('Welcome to Coaster Connections Game!')
-        while not self.check_game_over():
-            guess = input('Make a guess (4 word options): ')
-            self.make_guess(guess)
-            print(f'Guesses so far: {self.guess_history}')
-            if len(self.guess_history) == len(set(self.words)):
-                print('Congratulations! You guessed all the words correctly!')
-                break
+    if mistakes >= max_mistakes:
+        print("Game over! You've made too many mistakes.")
 
-if __name__ == '__main__':
-    game = Game()
-    game.play()
+if __name__ == "__main__":
+    main()
