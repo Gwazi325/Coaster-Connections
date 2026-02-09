@@ -1,0 +1,107 @@
+class ConnectionsGame:
+    def __init__(self, words, solution):
+        """
+        words: list of 16 words
+        solution: list of dicts with:
+            - "color"
+            - "category"
+            - "words" (set of 4)
+        """
+        self.words = set(words)
+        self.solution = solution
+        self.solved_groups = []
+        self.mistakes_left = 4
+
+    def guess(self, selected_words):
+        if self.is_game_over():
+            return "Game over."
+
+        selected_words = set(selected_words)
+
+        if len(selected_words) != 4:
+            return "You must select exactly 4 words."
+
+        for group in self.solution:
+            if (
+                selected_words == group["words"]
+                and group not in self.solved_groups
+            ):
+                self.solved_groups.append(group)
+                self.words -= group["words"]
+                return f"✅ Correct! ({group['color']})"
+
+        self.mistakes_left -= 1
+
+        if self.mistakes_left == 0:
+            return "❌ No mistakes left. Game over.\n" + self.reveal_solution()
+
+        return f"❌ Incorrect. Mistakes left: {self.mistakes_left}"
+
+    def reveal_solution(self):
+        reveal_text = "\n🔍 SOLUTION REVEAL:\n"
+        for group in self.solution:
+            reveal_text += (
+                f"{group['color']} {group['category']}: "
+                f"{', '.join(sorted(group['words']))}\n"
+            )
+        return reveal_text
+
+    def is_game_over(self):
+        return self.mistakes_left == 0 or len(self.solved_groups) == 4
+
+    def status(self):
+        return {
+            "remaining_words": sorted(self.words),
+            "solved_groups": [
+                {
+                    "color": g["color"],
+                    "category": g["category"],
+                    "words": sorted(g["words"])
+                }
+                for g in self.solved_groups
+            ],
+            "mistakes_left": self.mistakes_left
+        }
+words = [
+    "CANNIBAL",
+    "MAKO",
+    "PANTHERIAN",
+    "HELIX",
+    "SHAMBHALA",
+    "EXPEDITION GEFORCE",
+    "HANGTIME",
+    "SHIVERING TIMBERS",
+    "PANTHEON",
+    "VOYAGE",
+    "APOLLO'S CHARIOT",
+    "WILDCAT'S REVENGE",
+    "DIAMONDBACK",
+    "ALPENFURY",
+    "FONIX",
+    "OLYMPIA LOOPING"
+]
+
+solution = [
+    {
+        "color": "🟨",
+        "category": "B&M HYPERS",
+        "words": {"MAKO", "DIAMONDBACK", "APOLLO'S CHARIOT", "SHAMBHALA"}
+    },
+    {
+        "color": "🟩",
+        "category": "OPENED IN THE 2020s",
+        "words": {"PANTHEON", "ALPENFURY", "WILDCAT'S REVENGE", "FONIX"}
+    },
+    {
+        "color": "🟦",
+        "category": "TALLEST COASTER IN RESPECTIVE U.S. STATE",
+        "words": {"CANNIBAL", "PANTHERIAN", "SHIVERING TIMBERS", "VOYAGE"}
+    },
+    {
+        "color": "🟪",
+        "category": "NAMES CONTAIN COASTER TERMINOLOGY",
+        "words": {"HANGTIME", "HELIX", "OLYMPIA LOOPING", "EXPEDITION GEFORCE"}
+    }
+]
+
+game = ConnectionsGame(words, solution)
