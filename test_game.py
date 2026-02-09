@@ -1,37 +1,41 @@
 import tkinter as tk
 from tkinter import messagebox
 
-class CoasterSelection:
-    def __init__(self, root):
-        self.root = root
-        self.root.title('Coaster Selection')
+class CoasterConnections:
+    def __init__(self, master):
+        self.master = master
+        master.title("Coaster Connections")
 
-        self.coasters = [
-            'Coaster 1', 'Coaster 2', 'Coaster 3', 'Coaster 4',
-            'Coaster 5', 'Coaster 6', 'Coaster 7', 'Coaster 8',
-            'Coaster 9', 'Coaster 10', 'Coaster 11', 'Coaster 12',
-            'Coaster 13', 'Coaster 14', 'Coaster 15', 'Coaster 16'
-        ]
+        self.coasters = ["Coaster A", "Coaster B", "Coaster C", "Coaster D"]
         self.selected_coasters = []
 
-        self.create_buttons()
+        self.instructions = tk.Label(master, text="Select a coaster and submit your guess!")
+        self.instructions.pack()
 
-    def create_buttons(self):
-        for index, coaster in enumerate(self.coasters):
-            button = tk.Button(self.root, text=coaster, command=lambda c=coaster: self.select_coaster(c))
-            button.grid(row=index // 4, column=index % 4, padx=10, pady=10, sticky='nsew')
-            self.root.grid_rowconfigure(index // 4, weight=1)
-            self.root.grid_columnconfigure(index % 4, weight=1)
+        self.buttons = []
+        for coaster in self.coasters:
+            button = tk.Button(master, text=coaster, command=lambda c=coaster: self.select_coaster(c))
+            button.pack(pady=5)
+            self.buttons.append(button)
+
+        self.submit_button = tk.Button(master, text="Submit Guess", command=self.submit_guess)
+        self.submit_button.pack(pady=20)
 
     def select_coaster(self, coaster):
         if coaster not in self.selected_coasters:
             self.selected_coasters.append(coaster)
+            messagebox.showinfo("Selected", f"You selected {coaster}!")
         else:
             self.selected_coasters.remove(coaster)
+            messagebox.showinfo("Deselected", f"You deselected {coaster}!")
 
-        messagebox.showinfo('Selection', f'Selected Coasters: {self.selected_coasters}')
+    def submit_guess(self):
+        if not self.selected_coasters:
+            messagebox.showwarning("No Selection", "Please select at least one coaster.")
+            return
+        messagebox.showinfo("Your Guess", f"You guessed: {', '.join(self.selected_coasters)}")
 
 if __name__ == '__main__':
     root = tk.Tk()
-    app = CoasterSelection(root)
+    app = CoasterConnections(root)
     root.mainloop()
