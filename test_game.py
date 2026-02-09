@@ -1,35 +1,37 @@
-from coaster_connections import ConnectionsGame
+import tkinter as tk
+from tkinter import messagebox
 
-def main():
-    game = ConnectionsGame()
-    max_mistakes = 4
-    mistakes = 0
+class CoasterSelection:
+    def __init__(self, root):
+        self.root = root
+        self.root.title('Coaster Selection')
 
-    print("Welcome to the Connections Game!")
-    print("Guess the connections by entering 4 words at a time.")
-    print(f"You can make up to {max_mistakes} mistakes.")
+        self.coasters = [
+            'Coaster 1', 'Coaster 2', 'Coaster 3', 'Coaster 4',
+            'Coaster 5', 'Coaster 6', 'Coaster 7', 'Coaster 8',
+            'Coaster 9', 'Coaster 10', 'Coaster 11', 'Coaster 12',
+            'Coaster 13', 'Coaster 14', 'Coaster 15', 'Coaster 16'
+        ]
+        self.selected_coasters = []
 
-    while mistakes < max_mistakes:
-        guess = input("Enter your guess (4 words separated by spaces): ")
-        words = guess.split()
+        self.create_buttons()
 
-        if len(words) != 4:
-            print("Please enter exactly 4 words.")
-            continue
+    def create_buttons(self):
+        for index, coaster in enumerate(self.coasters):
+            button = tk.Button(self.root, text=coaster, command=lambda c=coaster: self.select_coaster(c))
+            button.grid(row=index // 4, column=index % 4, padx=10, pady=10, sticky='nsew')
+            self.root.grid_rowconfigure(index // 4, weight=1)
+            self.root.grid_columnconfigure(index % 4, weight=1)
 
-        if game.check_guess(words):
-            print("Correct guess!")
-            game.record_correct_guess(words)
+    def select_coaster(self, coaster):
+        if coaster not in self.selected_coasters:
+            self.selected_coasters.append(coaster)
         else:
-            mistakes += 1
-            print(f"Wrong guess! You have {max_mistakes - mistakes} mistakes left.")
+            self.selected_coasters.remove(coaster)
 
-        if game.is_completed():
-            print("Congratulations! You've completed the game.")
-            break
+        messagebox.showinfo('Selection', f'Selected Coasters: {self.selected_coasters}')
 
-    if mistakes >= max_mistakes:
-        print("Game over! You've made too many mistakes.")
-
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    root = tk.Tk()
+    app = CoasterSelection(root)
+    root.mainloop()
